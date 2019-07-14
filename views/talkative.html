@@ -33,6 +33,20 @@
     <script>
       let faceTracker;
       let debug = 0;
+      let rotate = -90;
+
+      function rotate_90_ccw(img) {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext("2d");
+        var w = img.width;
+        var h = img.height;
+        canvas.width = h;
+        canvas.height = w;
+        ctx.translate(h, 0);
+        ctx.rotate((90 * Math.PI) / 180);
+        ctx.drawImage(img, 0, 0, w, h);
+        return canvas;
+      }
 
       async function onPlay() {
         const videoEl = $('#inputVideo').get(0);
@@ -40,16 +54,31 @@
         if (videoEl.paused || videoEl.ended || !(faceTracker && faceTracker.isLoaded()))
           return setTimeout(() => onPlay());
 
+        const dims = faceapi.getMediaDimensions(videoEl);
         const ts = Date.now();
-        const result = await faceTracker.detectAllFaces(videoEl);
+        let videoSource = videoEl;
+        if (rotate === -90) {
+          const imageCapture = new ImageCapture(videoSource.srcObject.getVideoTracks()[0]);
+          videoSource = await imageCapture.grabFrame();
+          videoSource = rotate_90_ccw(videoSource);
+          videoSource = videoEl;
+        }
+        const result = await faceTracker.detectAllFaces(videoSource);
 
         updateTimeStats(Date.now() - ts);
 
         const canvas = $('#overlay').get(0);
         const ctx = canvas.getContext('2d');
+        if (rotate) {
+          canvas.height = dims.height;
+          canvas.width = dims.width;
+        } else if (Math.abs(rotate) === 90) {
+          canvas.width = dims.height;
+          canvas.height = dims.width;
+        }
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (result && result.length > 0) {
-          const dims = faceapi.matchDimensions(canvas, videoEl, true);
 
           if (debug) {
             faceapi.draw.drawDetections(canvas, faceapi.resizeResults(
