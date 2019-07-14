@@ -47,6 +47,7 @@ class FaceTracker {
     this.options = this.getFaceDetectorOptions();
     this.detectionBuffer = {};
     this.timeout = 1; // seconds
+    this.minimalOverlap = 0.7;
   }
 
   isLoaded() {
@@ -95,12 +96,17 @@ class FaceTracker {
     }
   }
 
-  getOverlapArea() {
-
+  getOverlapArea(d1Buf, d2Buf) {
+    const width = Math.min(d1Buf.box.right, d2Buf.box.right) - Math.max(d1Buf.box.left, d2Buf.box.left);
+    const height = Math.min(d1Buf.box.bottom, d2Buf.box.bottom) - Math.max(d1Buf.box.top, d2Buf.box.top);
+    if (Math.min(width, height) < 0) {
+      return 0;
+    }
+    return width * height;
   }
 
   getOverlapRatio(d1Buf, d2Buf) {
-    const commonArea = 0;
+    const overlapArea = this.getOverlapArea(d1Buf, d2Buf);
     if (overlapArea <= 0) {
       return 0;
     }
@@ -108,6 +114,15 @@ class FaceTracker {
   }
 
   getId(detectionBuf, unusedDetectionBufs) {
+    const matches = Object.values(unusedDetectionBufs).map(oldDetectionBuf => ({
+      detectionBuf: oldDetectionBuf,
+      overlapRatio: this.getOverlapRatio(detectionBuf, oldDetectionBuf),
+    })).filter(match => match.overlapRatio > this.minimalOverlap);
+    if (matches.length) {
+      const oldId = matches[0].detectionBuf.id;
+      delete unusedDetectionBufs[oldId];
+      return oldId;
+    }
     return Math.random();
   }
 
@@ -117,9 +132,9 @@ class FaceTracker {
     let newDectionsBuf = detections.map(detection => this.detectionToDetectionBuf(detection, timestamp));
     newDectionsBuf.sort(this.detectionBufSort);
     this.removeOldDetectionsFromBuffer(timestamp);
-
+    const unusedDetectionsBuffer = Object.assign({}, this.detectionBuffer);
     newDectionsBuf.forEach((detectionBuf) => {
-      detectionBuf.id = this.getId(detectionBuf);
+      detectionBuf.id = this.getId(detectionBuf, unusedDetectionsBuffer);
     });
     newDectionsBuf.forEach(detectionBuf => {
       const prevValue = this.detectionBuffer[detectionBuf.id] || {};
