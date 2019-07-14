@@ -1,27 +1,12 @@
 const SSD_MOBILENETV1 = 'ssd_mobilenetv1';
-const TINY_FACE_DETECTOR = 'tiny_face_detector';
-const MTCNN = 'mtcnn';
 
 let selectedFaceDetector = SSD_MOBILENETV1;
 
 // ssd_mobilenetv1 options
 let minConfidence = 0.5;
 
-// tiny_face_detector options
-let inputSize = 512;
-let scoreThreshold = 0.5;
-
-//mtcnn options
-let minFaceSize = 20;
-
 function getFaceDetectorOptions() {
-  return selectedFaceDetector === SSD_MOBILENETV1
-    ? new faceapi.SsdMobilenetv1Options({ minConfidence })
-    : (
-      selectedFaceDetector === TINY_FACE_DETECTOR
-        ? new faceapi.TinyFaceDetectorOptions({ inputSize, scoreThreshold })
-        : new faceapi.MtcnnOptions({ minFaceSize })
-    )
+  return new faceapi.SsdMobilenetv1Options({ minConfidence });
 }
 
 function onIncreaseMinConfidence() {
@@ -36,47 +21,8 @@ function onDecreaseMinConfidence() {
   updateResults()
 }
 
-function onInputSizeChanged(e) {
-  changeInputSize(e.target.value);
-  updateResults()
-}
-
-function changeInputSize(size) {
-  inputSize = parseInt(size);
-
-  const inputSizeSelect = $('#inputSize');
-  inputSizeSelect.val(inputSize);
-  inputSizeSelect.material_select()
-}
-
-function onIncreaseScoreThreshold() {
-  scoreThreshold = Math.min(faceapi.round(scoreThreshold + 0.1), 1.0);
-  $('#scoreThreshold').val(scoreThreshold);
-  updateResults()
-}
-
-function onDecreaseScoreThreshold() {
-  scoreThreshold = Math.max(faceapi.round(scoreThreshold - 0.1), 0.1);
-  $('#scoreThreshold').val(scoreThreshold);
-  updateResults()
-}
-
-function onIncreaseMinFaceSize() {
-  minFaceSize = Math.min(faceapi.round(minFaceSize + 20), 300);
-  $('#minFaceSize').val(minFaceSize)
-}
-
-function onDecreaseMinFaceSize() {
-  minFaceSize = Math.max(faceapi.round(minFaceSize - 20), 50);
-  $('#minFaceSize').val(minFaceSize)
-}
-
 function getCurrentFaceDetectionNet() {
-  return {
-    [SSD_MOBILENETV1]: faceapi.nets.ssdMobilenetv1,
-    [TINY_FACE_DETECTOR]: faceapi.nets.tinyFaceDetector,
-    [MTCNN]: faceapi.nets.mtcnn,
-  }[selectedFaceDetector];
+  return faceapi.nets.ssdMobilenetv1;
 }
 
 function isFaceDetectionModelLoaded() {
@@ -101,21 +47,8 @@ async function changeFaceDetector(detector) {
   $('#loader').hide()
 }
 
-async function onSelectedFaceDetectorChanged(e) {
-  selectedFaceDetector = e.target.value;
-
-  await changeFaceDetector(e.target.value);
-  updateResults()
-}
-
 function initFaceDetectionControls() {
   const faceDetectorSelect = $('#selectFaceDetector');
   faceDetectorSelect.val(selectedFaceDetector);
-  faceDetectorSelect.on('change', onSelectedFaceDetectorChanged);
   faceDetectorSelect.material_select();
-
-  const inputSizeSelect = $('#inputSize');
-  inputSizeSelect.val(inputSize);
-  inputSizeSelect.on('change', onInputSizeChanged);
-  inputSizeSelect.material_select()
 }

@@ -28,18 +28,6 @@
 
     <div class="row side-by-side">
 
-      <!-- face_detector_selection_control -->
-      <div id="face_detector_selection_control" class="row input-field"
-           style="margin-right: 20px;">
-        <select id="selectFaceDetector">
-          <option value="ssd_mobilenetv1">SSD Mobilenet V1</option>
-          <option value="tiny_face_detector">Tiny Face Detector</option>
-          <option value="mtcnn">MTCNN</option>
-        </select>
-        <label>Select Face Detector</label>
-      </div>
-      <!-- face_detector_selection_control -->
-
       <!-- fps_meter -->
       <div id="fps_meter" class="row side-by-side">
         <div>
@@ -52,7 +40,6 @@
       <!-- fps_meter -->
 
     </div>
-
 
     <!-- ssd_mobilenetv1_controls -->
     <span id="ssd_mobilenetv1_controls">
@@ -77,66 +64,6 @@
       </div>
     </span>
     <!-- ssd_mobilenetv1_controls -->
-
-    <!-- tiny_face_detector_controls -->
-    <span id="tiny_face_detector_controls">
-      <div class="row side-by-side">
-        <div class="row input-field" style="margin-right: 20px;">
-          <select id="inputSize">
-            <option value="" disabled selected>Input Size:</option>
-            <option value="128">128 x 128</option>
-            <option value="160">160 x 160</option>
-            <option value="224">224 x 224</option>
-            <option value="320">320 x 320</option>
-            <option value="416">416 x 416</option>
-            <option value="512">512 x 512</option>
-            <option value="608">608 x 608</option>
-          </select>
-          <label>Input Size</label>
-        </div>
-        <div class="row">
-          <label for="scoreThreshold">Score Threshold:</label>
-          <input disabled value="0.5" id="scoreThreshold" type="text"
-                 class="bold">
-        </div>
-        <button
-          class="waves-effect waves-light btn"
-          onclick="onDecreaseScoreThreshold()"
-        >
-          <i class="material-icons left">-</i>
-        </button>
-        <button
-          class="waves-effect waves-light btn"
-          onclick="onIncreaseScoreThreshold()"
-        >
-          <i class="material-icons left">+</i>
-        </button>
-      </div>
-    </span>
-    <!-- tiny_face_detector_controls -->
-
-    <!-- mtcnn_controls -->
-    <span id="mtcnn_controls">
-      <div class="row side-by-side">
-        <div class="row">
-          <label for="minFaceSize">Minimum Face Size:</label>
-          <input disabled value="20" id="minFaceSize" type="text" class="bold">
-        </div>
-        <button
-          class="waves-effect waves-light btn"
-          onclick="onDecreaseMinFaceSize()"
-        >
-          <i class="material-icons left">-</i>
-        </button>
-        <button
-          class="waves-effect waves-light btn"
-          onclick="onIncreaseMinFaceSize()"
-        >
-          <i class="material-icons left">+</i>
-        </button>
-      </div>
-    </span>
-    <!-- mtcnn_controls -->
 
   </div>
 
@@ -177,7 +104,6 @@
     async function run() {
       // load face detection model
       await changeFaceDetector(SSD_MOBILENETV1);
-      changeInputSize(128);
 
       // try to access users webcam and stream the images
       // to the video element
