@@ -154,10 +154,9 @@ function getRandomText() {
   const max = texts.length - 1;
   const randomIndex = randomInRange(0, max);
   const textObject = texts[randomIndex];
-  var text = null;
+  var text = textObject.text;
   if (textObject.function) {
     const value = eval(textObject.function);
-    text = textObject.text;
     text = text.replace('{n}', value);
   }
   return text;
