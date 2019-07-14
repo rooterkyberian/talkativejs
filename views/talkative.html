@@ -46,8 +46,8 @@
 
     updateTimeStats(Date.now() - ts);
 
+    const canvas = $('#overlay').get(0);
     if (result && result.length > 0) {
-      const canvas = $('#overlay').get(0);
       const dims = faceapi.matchDimensions(canvas, videoEl, true);
       faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims))
       var ctx = canvas.getContext('2d');
