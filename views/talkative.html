@@ -68,14 +68,6 @@
 </div>
 
 <script>
-  let forwardTimes = [];
-
-  function updateTimeStats(timeInMs) {
-    forwardTimes = [timeInMs].concat(forwardTimes).slice(0, 30);
-    const avgTimeInMs = forwardTimes.reduce((total, t) => total + t) / forwardTimes.length;
-    $('#time').val(`${Math.round(avgTimeInMs)} ms`);
-    $('#fps').val(`${faceapi.round(1000 / avgTimeInMs)}`)
-  }
 
   async function onPlay() {
     const videoEl = $('#inputVideo').get(0);
@@ -92,11 +84,12 @@
 
     updateTimeStats(Date.now() - ts);
 
+    const canvas = $('#overlay').get(0);
     if (result) {
-      const canvas = $('#overlay').get(0);
       const dims = faceapi.matchDimensions(canvas, videoEl, true);
       faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims))
     }
+    drawStats(canvas, result && result.length);
 
     setTimeout(() => onPlay())
   }

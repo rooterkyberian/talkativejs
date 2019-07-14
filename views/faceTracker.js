@@ -6,7 +6,7 @@ let selectedFaceDetector = SSD_MOBILENETV1;
 let minConfidence = 0.5;
 
 function getFaceDetectorOptions() {
-  return new faceapi.SsdMobilenetv1Options({ minConfidence });
+  return new faceapi.SsdMobilenetv1Options({minConfidence});
 }
 
 function onIncreaseMinConfidence() {
@@ -45,4 +45,28 @@ async function changeFaceDetector(detector) {
 
   $(`#${detector}_controls`).show();
   $('#loader').hide()
+}
+
+let forwardTimes = [];
+
+function updateTimeStats(timeInMs) {
+  forwardTimes = [timeInMs].concat(forwardTimes).slice(0, 30);
+}
+
+function getAvgTimeInMs() {
+  return forwardTimes.reduce((total, t) => total + t) / forwardTimes.length
+}
+
+function drawStats(canvas, detections) {
+  const ctx = canvas.getContext("2d");
+  const fontSize = Math.ceil(Math.max(canvas.height / 40, 20));
+  ctx.font = `${fontSize}px Arial`;
+  ctx.fillStyle = '#8ED6FF';
+
+  const avgTimeInMs = getAvgTimeInMs();
+  const timeText = `${Math.round(avgTimeInMs)} ms`;
+  const fpsText = `${faceapi.round(1000 / avgTimeInMs)}`;
+
+  ctx.fillText(`${fpsText} fps (${timeText})`, 10, fontSize);
+  ctx.fillText(`${detections} faces`, 10, 2.1 * fontSize);
 }
