@@ -10,9 +10,9 @@ function SpeechBubble(context) {
   this.panelBounds = new SpeechBubble.Bounds(100, 100, 300, 100);
   this.cornerRadius = 10;
   this.padding = 10;
-  this.panelBorderWidth = 2;
-  this.panelBorderColor = "#333";
-  this.panelFillColor = "#FFF";
+  this.panelBorderWidth = 3;
+  this.panelBorderColor = "#00aca9";
+  this.panelFillColor = "#fff";
 
   // Tail
   this.tailBaseWidth = 10;
@@ -22,9 +22,9 @@ function SpeechBubble(context) {
   // Text
   this.text = "";
   this.lineSpacing = 5;
-  this.font = "Georgia";
+  this.font = "Arial";
   this.fontSize = 20;
-  this.fontColor = "#900";
+  this.fontColor = "#00aca9";
   this.textAlign = SpeechBubble.ALIGN_CENTER;
   this.overflow = SpeechBubble.OVERFLOW_VERTICAL_STRETCH;
 
@@ -196,7 +196,7 @@ SpeechBubble.prototype.getSafeSpace = function() {
 };
 
 SpeechBubble.prototype.drawText = function(lines) {
-  this.context.font = this.fontSize + "px " + this.font;
+  this.context.font = "bold " + this.fontSize + "px " + this.font;
   this.context.fillStyle = this.fontColor;
   this.context.textBaseline = "hanging";
 
