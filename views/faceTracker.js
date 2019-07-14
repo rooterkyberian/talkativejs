@@ -46,9 +46,3 @@ async function changeFaceDetector(detector) {
   $(`#${detector}_controls`).show();
   $('#loader').hide()
 }
-
-function initFaceDetectionControls() {
-  const faceDetectorSelect = $('#selectFaceDetector');
-  faceDetectorSelect.val(selectedFaceDetector);
-  faceDetectorSelect.material_select();
-}
