@@ -4,6 +4,7 @@
     <title>TalkativeJS</title>
     <script src="face-api.js"></script>
     <script src="faceTracker.js"></script>
+    <script src="texts.js"></script>
     <script src="SpeechBubble.js"></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet"
@@ -54,7 +55,10 @@
           result.forEach(function (detection) {
             speechBubble = new SpeechBubble(canvas.getContext('2d'));
             speechBubble.panelBounds = new SpeechBubble.Bounds(detection.y - 120,  detection.x - 320, 300, 100);
-            speechBubble.text = `randomize text here yo - idk about emotes ${detection.id}`;
+            if (!detection.text) {
+              detection.text = getRandomText();
+            }
+            speechBubble.text = detection.text;
             speechBubble.setTargetPos(detection.x - 50, detection.y + 50);
             speechBubble.draw();
           });

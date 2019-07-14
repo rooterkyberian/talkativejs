@@ -45,7 +45,7 @@ class FaceTracker {
   constructor() {
     this.faceDetectionNet = faceapi.nets.ssdMobilenetv1;
     this.options = this.getFaceDetectorOptions();
-    this.detectionBuffer = [];
+    this.detectionBuffer = {};
     this.timeout = 1; // seconds
     this.detectionCounter = 0;
   }
@@ -69,7 +69,13 @@ class FaceTracker {
 
   removeOldDetectionsFromBuffer(timestamp) {
     const cutoff = timestamp - this.timeout;
-    this.detectionBuffer = this.detectionBuffer.filter(oldDetectionBuf => oldDetectionBuf.timestamp > cutoff)
+    const newDetectionBuffer = {};
+    Object.values(this.detectionBuffer).forEach(oldDetectionBuf => {
+      if (oldDetectionBuf.timestamp >= cutoff) {
+        newDetectionBuffer[oldDetectionBuf.id] = oldDetectionBuf;
+      }
+    });
+    this.detectionBuffer = newDetectionBuffer;
   }
 
   /**
@@ -95,13 +101,16 @@ class FaceTracker {
   async detectAllFaces(videoEl) {
     const timestamp = nowTimestamp();
     const detections = await faceapi.detectAllFaces(videoEl, this.options);
-    const newDectionsBuf = detections.map(detection => this.detectionToDetectionBuf(detection, timestamp));
+    let newDectionsBuf = detections.map(detection => this.detectionToDetectionBuf(detection, timestamp));
     newDectionsBuf.sort(this.detectionBufSort);
-
-    this.removeOldDetectionsFromBuffer();
+    this.removeOldDetectionsFromBuffer(timestamp);
     newDectionsBuf.forEach((detectionBuf, index) => {
       detectionBuf.id = index;
     });
-    return newDectionsBuf;
+    newDectionsBuf.forEach(detectionBuf => {
+      const prevValue = this.detectionBuffer[detectionBuf.id] || {};
+      this.detectionBuffer[detectionBuf.id] = Object.assign(prevValue, detectionBuf);
+    });
+    return newDectionsBuf.map(detectionBuf => this.detectionBuffer[detectionBuf.id]);
   }
 }

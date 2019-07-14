@@ -1,4 +1,4 @@
-export const texts = [
+const texts = [
     {
         "type": "think",
         "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
@@ -11,7 +11,7 @@ export const texts = [
     },
     {
         "type": "think",
-        "cron": [
+        "schedule": [
             "00:00-10:30",
             "19:00-24:00",
         ],
@@ -147,11 +147,11 @@ export const texts = [
 
 
 function randomInRange(min, max) {
-  (Math.random() * (max - min + 1)) << 0
+  return (Math.random() * (max - min + 1)) << 0;
 }
 
 function getRandomText() {
-  max = texts.length - 1;
-  randomIndex = randomInRange(0, max);
-  return texts[randomIndex];
+  const max = texts.length - 1;
+  const randomIndex = randomInRange(0, max);
+  return texts[randomIndex].text;
 }
