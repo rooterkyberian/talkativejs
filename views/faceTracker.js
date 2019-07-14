@@ -19,17 +19,12 @@ function isFaceDetectionModelLoaded(faceDetectionNet) {
 
 async function changeFaceDetector(detector) {
   selectedFaceDetector = detector;
-  const faceDetectorSelect = $('#selectFaceDetector');
-  faceDetectorSelect.val(detector);
-  faceDetectorSelect.material_select();
 
   $('#loader').show();
   const faceDetectionNet = getCurrentFaceDetectionNet();
   if (!isFaceDetectionModelLoaded(faceDetectionNet)) {
     await faceDetectionNet.load('/')
   }
-
-  $(`#${detector}_controls`).show();
   $('#loader').hide()
 }
 
