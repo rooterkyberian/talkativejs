@@ -71,3 +71,7 @@
 #facesContainer canvas {
   margin: 10px;
 }
+
+body {
+  background-color: #000;
+}
