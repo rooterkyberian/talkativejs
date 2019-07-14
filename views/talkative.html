@@ -14,35 +14,35 @@
   <script src="/reload/reload.js"></script>
 </head>
 <body>
-  <div id="navbar"></div>
-  <div class="center-content page-container">
+<div id="navbar"></div>
+<div class="center-content page-container">
 
-    <div class="progress" id="loader">
-      <div class="indeterminate"></div>
-    </div>
-    <div style="position: relative" class="margin">
-      <video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay
-             muted></video>
-      <canvas id="overlay"/>
-    </div>
+  <div class="progress" id="loader">
+    <div class="indeterminate"></div>
+  </div>
+  <div style="position: relative">
+    <video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay
+           muted></video>
+    <canvas id="overlay"/>
+  </div>
 
-    <div class="row side-by-side">
+  <div class="row side-by-side">
 
-      <!-- fps_meter -->
-      <div id="fps_meter" class="row side-by-side">
-        <div>
-          <label for="time">Time:</label>
-          <input disabled value="-" id="time" type="text" class="bold">
-          <label for="fps">Estimated Fps:</label>
-          <input disabled value="-" id="fps" type="text" class="bold">
-        </div>
+    <!-- fps_meter -->
+    <div id="fps_meter" class="row side-by-side">
+      <div>
+        <label for="time">Time:</label>
+        <input disabled value="-" id="time" type="text" class="bold">
+        <label for="fps">Estimated Fps:</label>
+        <input disabled value="-" id="fps" type="text" class="bold">
       </div>
-      <!-- fps_meter -->
-
     </div>
+    <!-- fps_meter -->
 
-    <!-- ssd_mobilenetv1_controls -->
-    <span id="ssd_mobilenetv1_controls">
+  </div>
+
+  <!-- ssd_mobilenetv1_controls -->
+  <span id="ssd_mobilenetv1_controls">
       <div class="row side-by-side">
         <div class="row">
           <label for="minConfidence">Min Confidence:</label>
@@ -63,62 +63,66 @@
         </button>
       </div>
     </span>
-    <!-- ssd_mobilenetv1_controls -->
+  <!-- ssd_mobilenetv1_controls -->
 
-  </div>
+</div>
 
-  <script>
-    let forwardTimes = [];
+<script>
+  let forwardTimes = [];
 
-    function updateTimeStats(timeInMs) {
-      forwardTimes = [timeInMs].concat(forwardTimes).slice(0, 30);
-      const avgTimeInMs = forwardTimes.reduce((total, t) => total + t) / forwardTimes.length;
-      $('#time').val(`${Math.round(avgTimeInMs)} ms`);
-      $('#fps').val(`${faceapi.round(1000 / avgTimeInMs)}`)
+  function updateTimeStats(timeInMs) {
+    forwardTimes = [timeInMs].concat(forwardTimes).slice(0, 30);
+    const avgTimeInMs = forwardTimes.reduce((total, t) => total + t) / forwardTimes.length;
+    $('#time').val(`${Math.round(avgTimeInMs)} ms`);
+    $('#fps').val(`${faceapi.round(1000 / avgTimeInMs)}`)
+  }
+
+  async function onPlay() {
+    const videoEl = $('#inputVideo').get(0);
+
+    if (videoEl.paused || videoEl.ended || !isFaceDetectionModelLoaded())
+      return setTimeout(() => onPlay());
+
+
+    const options = getFaceDetectorOptions();
+
+    const ts = Date.now();
+
+    const result = await faceapi.detectAllFaces(videoEl, options);
+
+    updateTimeStats(Date.now() - ts);
+
+    if (result) {
+      const canvas = $('#overlay').get(0);
+      const dims = faceapi.matchDimensions(canvas, videoEl, true);
+      faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims))
     }
 
-    async function onPlay() {
-      const videoEl = $('#inputVideo').get(0);
+    setTimeout(() => onPlay())
+  }
 
-      if (videoEl.paused || videoEl.ended || !isFaceDetectionModelLoaded())
-        return setTimeout(() => onPlay());
+  async function run() {
+    // load face detection model
+    await changeFaceDetector(SSD_MOBILENETV1);
 
-
-      const options = getFaceDetectorOptions();
-
-      const ts = Date.now();
-
-      const result = await faceapi.detectSingleFace(videoEl, options);
-
-      updateTimeStats(Date.now() - ts);
-
-      if (result) {
-        const canvas = $('#overlay').get(0);
-        const dims = faceapi.matchDimensions(canvas, videoEl, true);
-        faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims))
+    // try to access users webcam and stream the images
+    // to the video element
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        width: 1920,
+        height: 1080
       }
+    });
+    const videoEl = $('#inputVideo').get(0);
+    videoEl.srcObject = stream
+  }
 
-      setTimeout(() => onPlay())
-    }
+  function updateResults() {
+  }
 
-    async function run() {
-      // load face detection model
-      await changeFaceDetector(SSD_MOBILENETV1);
-
-      // try to access users webcam and stream the images
-      // to the video element
-      const stream = await navigator.mediaDevices.getUserMedia({video: {}});
-      const videoEl = $('#inputVideo').get(0);
-      videoEl.srcObject = stream
-    }
-
-    function updateResults() {
-    }
-
-    $(document).ready(function () {
-      initFaceDetectionControls();
-      run()
-    })
-  </script>
-  </body>
+  $(document).ready(function () {
+    run()
+  })
+</script>
+</body>
 </html>
