@@ -148,3 +148,14 @@ export const texts = [
         "text": "There's nothing quite so permanent as a quick fix",
     }
 ];
+
+
+function randomInRange(min, max) {
+  (Math.random() * (max - min + 1)) << 0
+}
+
+function getRandomText() {
+  max = texts.length - 1;
+  randomIndex = randomInRange(0, max);
+  return texts[randomIndex];
+}
