@@ -21,7 +21,7 @@ function getAvgTimeInMs() {
 
 function drawStats(canvas, detections) {
   const ctx = canvas.getContext("2d");
-  const fontSize = Math.ceil(Math.max(canvas.height / 40, 20));
+  const fontSize = Math.ceil(Math.max(canvas.height / 60, 20));
   ctx.font = `${fontSize}px Arial`;
   ctx.fillStyle = '#7fc8ec';
 
