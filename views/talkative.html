@@ -1,93 +1,93 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>TalkativeJS</title>
-  <script src="face-api.js"></script>
-  <script src="faceTracker.js"></script>
-  <script src="SpeechBubble.js"></script>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.css">
-  <script type="text/javascript"
-          src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-  <script src="/reload/reload.js"></script>
-</head>
-<body>
-<div id="navbar"></div>
-<div class="center-content page-container">
+  <head>
+    <title>TalkativeJS</title>
+    <script src="face-api.js"></script>
+    <script src="faceTracker.js"></script>
+    <script src="SpeechBubble.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.css">
+    <script type="text/javascript"
+            src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="/reload/reload.js"></script>
+  </head>
+  <body>
+    <div id="navbar"></div>
+    <div class="center-content page-container">
 
-  <div class="progress" id="loader">
-    <div class="indeterminate"></div>
-  </div>
-  <div style="position: relative">
-    <video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay
-           muted></video>
-    <canvas id="overlay"/>
-  </div>
+      <div class="progress" id="loader">
+        <div class="indeterminate"></div>
+      </div>
+      <div style="position: relative">
+        <video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay
+               muted></video>
+        <canvas id="overlay"/>
+      </div>
 
-</div>
+    </div>
 
-<script>
-  let faceTracker;
+    <script>
+      let faceTracker;
 
-  async function onPlay() {
-    const videoEl = $('#inputVideo').get(0);
+      async function onPlay() {
+        const videoEl = $('#inputVideo').get(0);
 
-    if (videoEl.paused || videoEl.ended || !(faceTracker && faceTracker.isLoaded()))
-      return setTimeout(() => onPlay());
+        if (videoEl.paused || videoEl.ended || !(faceTracker && faceTracker.isLoaded()))
+          return setTimeout(() => onPlay());
 
-    const ts = Date.now();
-    const result = await faceTracker.detectAllFaces(videoEl);
+        const ts = Date.now();
+        const result = await faceTracker.detectAllFaces(videoEl);
 
-    updateTimeStats(Date.now() - ts);
+        updateTimeStats(Date.now() - ts);
 
-    const canvas = $('#overlay').get(0);
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (result && result.length > 0) {
-      const dims = faceapi.matchDimensions(canvas, videoEl, true);
-      faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims));
+        const canvas = $('#overlay').get(0);
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (result && result.length > 0) {
+          const dims = faceapi.matchDimensions(canvas, videoEl, true);
+          faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims));
 
-      // draw speech bubble for each found face box
-      result.forEach(function (element) {
-        speechBubble = new SpeechBubble(canvas.getContext('2d'));
-        speechBubble.panelBounds = new SpeechBubble.Bounds(element._box._y - 150,  element._box._x - 350, 300, 100);
-        speechBubble.text = 'randomize text here yo - idk about emotes';
-        speechBubble.setTargetPos(element._box._x, element._box._y + 100);
-        speechBubble.draw();
-      });
-    }
-    drawStats(canvas, result && result.length);
+          // draw speech bubble for each found face box
+          result.forEach(function (element) {
+            speechBubble = new SpeechBubble(canvas.getContext('2d'));
+            speechBubble.panelBounds = new SpeechBubble.Bounds(element._box._y - 150,  element._box._x - 350, 300, 100);
+            speechBubble.text = 'randomize text here yo - idk about emotes';
+            speechBubble.setTargetPos(element._box._x, element._box._y + 100);
+            speechBubble.draw();
+          });
+        }
+        drawStats(canvas, result && result.length);
 
-    setTimeout(() => onPlay())
-  }
-
-  async function run() {
-    faceTracker = new FaceTracker();
-    // load face detection model
-    faceTracker.load();
-
-    // try to access users webcam and stream the images
-    // to the video element
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        width: 1920,
-        height: 1080
+        setTimeout(() => onPlay())
       }
-    });
-    const videoEl = $('#inputVideo').get(0);
-    videoEl.srcObject = stream
-  }
 
-  function updateResults() {
-  }
+      async function run() {
+        faceTracker = new FaceTracker();
+        // load face detection model
+        faceTracker.load();
+
+        // try to access users webcam and stream the images
+        // to the video element
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: 1920,
+            height: 1080
+          }
+        });
+        const videoEl = $('#inputVideo').get(0);
+        videoEl.srcObject = stream
+      }
+
+      function updateResults() {
+      }
 
 
-  $(document).ready(function () {
-    run()
-  })
-</script>
-</body>
+      $(document).ready(function () {
+        run()
+      })
+    </script>
+  </body>
 </html>
