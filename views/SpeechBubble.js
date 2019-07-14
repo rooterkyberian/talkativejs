@@ -16,7 +16,7 @@ function SpeechBubble(context) {
 
   // Tail
   this.tailBaseWidth = 10;
-  this.tailStyle = SpeechBubble.TAIL_STRAIGHT;
+  this.tailStyle = SpeechBubble.TAIL_CURVED;
   this.target = new SpeechBubble.Vector();
 
   // Text
