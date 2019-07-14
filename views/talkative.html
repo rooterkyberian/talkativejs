@@ -4,7 +4,7 @@
   <title>TalkativeJS</title>
   <script src="face-api.js"></script>
   <script src="faceTracker.js"></script>
-  <script src="bubbles.js"></script>
+  <script src="SpeechBubble.js"></script>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.css">
@@ -41,7 +41,6 @@
     const options = getFaceDetectorOptions();
 
     const ts = Date.now();
-
     const result = await faceapi.detectAllFaces(videoEl, options);
 
     updateTimeStats(Date.now() - ts);
@@ -50,9 +49,13 @@
     if (result && result.length > 0) {
       const dims = faceapi.matchDimensions(canvas, videoEl, true);
       faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims))
-      var ctx = canvas.getContext('2d');
+      // draw speech bubble for each found face box
       result.forEach(function (element) {
-        drawBubble(ctx, element._box._x - 300, element._box._y, 300, 90, 20);
+        speechBubble = new SpeechBubble(canvas.getContext('2d'));
+        speechBubble.panelBounds = new SpeechBubble.Bounds(element._box._y - 150,  element._box._x - 350, 300, 100);
+        speechBubble.text = 'randomize text here yo - idk about emotes';
+        speechBubble.setTargetPos(element._box._x, element._box._y + 100);
+        speechBubble.draw();
       });
     }
     drawStats(canvas, result && result.length);
