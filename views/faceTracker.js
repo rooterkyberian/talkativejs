@@ -13,22 +13,20 @@ function getCurrentFaceDetectionNet() {
   return faceapi.nets.ssdMobilenetv1;
 }
 
-function isFaceDetectionModelLoaded() {
-  return !!getCurrentFaceDetectionNet().params
+function isFaceDetectionModelLoaded(faceDetectionNet) {
+  return !!faceDetectionNet.params
 }
 
 async function changeFaceDetector(detector) {
-  ['#ssd_mobilenetv1_controls', '#tiny_face_detector_controls', '#mtcnn_controls']
-    .forEach(id => $(id).hide());
-
   selectedFaceDetector = detector;
   const faceDetectorSelect = $('#selectFaceDetector');
   faceDetectorSelect.val(detector);
   faceDetectorSelect.material_select();
 
   $('#loader').show();
-  if (!isFaceDetectionModelLoaded()) {
-    await getCurrentFaceDetectionNet().load('/')
+  const faceDetectionNet = getCurrentFaceDetectionNet();
+  if (!isFaceDetectionModelLoaded(faceDetectionNet)) {
+    await faceDetectionNet.load('/')
   }
 
   $(`#${detector}_controls`).show();
@@ -64,5 +62,10 @@ function drawStats(canvas, detections) {
 }
 
 class FaceTracker {
-  selectedFaceDetector = SSD_MOBILENETV1;
+  constructor() {
+    this.selectedFaceDetector = SSD_MOBILENETV1;
+    if (!isFaceDetectionModelLoaded()) {
+      getCurrentFaceDetectionNet().load('/')
+    }
+  }
 }

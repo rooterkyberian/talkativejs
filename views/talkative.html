@@ -34,7 +34,7 @@
   async function onPlay() {
     const videoEl = $('#inputVideo').get(0);
 
-    if (videoEl.paused || videoEl.ended || !isFaceDetectionModelLoaded())
+    if (videoEl.paused || videoEl.ended || !isFaceDetectionModelLoaded(getCurrentFaceDetectionNet()))
       return setTimeout(() => onPlay());
 
 
@@ -51,7 +51,7 @@
       const dims = faceapi.matchDimensions(canvas, videoEl, true);
       faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims))
       var ctx = canvas.getContext('2d');
-      result.forEach(function(element) {
+      result.forEach(function (element) {
         drawBubble(ctx, element._box._x - 300, element._box._y, 300, 90, 20);
       });
     }
