@@ -45,10 +45,11 @@
     updateTimeStats(Date.now() - ts);
 
     const canvas = $('#overlay').get(0);
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (result && result.length > 0) {
       const dims = faceapi.matchDimensions(canvas, videoEl, true);
       faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims));
-      var ctx = canvas.getContext('2d');
       result.forEach(function (element) {
         drawBubble(ctx, element._box._x - 300, element._box._y, 300, 90, 20);
       });
