@@ -4,6 +4,7 @@
   <title>TalkativeJS</title>
   <script src="face-api.js"></script>
   <script src="faceTracker.js"></script>
+  <script src="bubbles.js"></script>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.css">
@@ -97,7 +98,9 @@
       const dims = faceapi.matchDimensions(canvas, videoEl, true);
       faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims))
       var ctx = canvas.getContext('2d');
-      drawBubble(ctx, result[0]._box._x - 300, result[0]._box._y, 300, 90, 20);
+      result.forEach(function(element) {
+        drawBubble(ctx, element._box._x - 300, element._box._y, 300, 90, 20);
+      });
     }
 
     setTimeout(() => onPlay())
@@ -122,25 +125,6 @@
   function updateResults() {
   }
 
-  function drawBubble(ctx, x, y, w, h, radius) {
-    var r = x + w;
-    var b = y + h;
-    ctx.beginPath();
-    ctx.strokeStyle="black";
-    ctx.lineWidth="2";    y = y - h;
-    ctx.moveTo(x+radius, y);
-    ctx.lineTo(r-radius, y);
-    ctx.quadraticCurveTo(r, y, r, y+radius);
-    ctx.lineTo(r, y+h-radius);
-    ctx.quadraticCurveTo(r, b, r-radius, b);
-    ctx.lineTo(r+20, b+40);
-    ctx.lineTo(r-50, b);
-    ctx.lineTo(x+radius, b);
-    ctx.quadraticCurveTo(x, b, x, b-radius);
-    ctx.lineTo(x, y+radius);
-    ctx.quadraticCurveTo(x, y, x+radius, y);
-    ctx.stroke();
-  }
 
   $(document).ready(function () {
     run()
