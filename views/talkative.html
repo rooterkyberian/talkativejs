@@ -32,6 +32,7 @@
 
     <script>
       let faceTracker;
+      let debug = 0;
 
       async function onPlay() {
         const videoEl = $('#inputVideo').get(0);
@@ -49,17 +50,19 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (result && result.length > 0) {
           const dims = faceapi.matchDimensions(canvas, videoEl, true);
-          faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims));
+          faceapi.draw.drawDetections(canvas, faceapi.resizeResults(
+            result.map(detectionBuf => detectionBuf.detection
+            ), dims));
 
           // draw speech bubble for each found face box
           result.forEach(function (detection) {
             speechBubble = new SpeechBubble(canvas.getContext('2d'));
-            speechBubble.panelBounds = new SpeechBubble.Bounds(detection.y - 120,  detection.x - 320, 300, 100);
+            speechBubble.panelBounds = new SpeechBubble.Bounds(detection.box.y - 120,  detection.box.x - 320, 300, 100);
             if (!detection.text) {
               detection.text = getRandomText();
             }
             speechBubble.text = detection.text;
-            speechBubble.setTargetPos(detection.x - 50, detection.y + 50);
+            speechBubble.setTargetPos(detection.box.x - 50, detection.box.y + 50);
             speechBubble.draw();
           });
         }
