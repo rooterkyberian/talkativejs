@@ -51,11 +51,11 @@
           faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims));
 
           // draw speech bubble for each found face box
-          result.forEach(function (element) {
+          result.forEach(function (detection) {
             speechBubble = new SpeechBubble(canvas.getContext('2d'));
-            speechBubble.panelBounds = new SpeechBubble.Bounds(element._box._y - 120,  element._box._x - 320, 300, 100);
+            speechBubble.panelBounds = new SpeechBubble.Bounds(detection.y - 120,  detection.x - 320, 300, 100);
             speechBubble.text = 'randomize text here yo - idk about emotes';
-            speechBubble.setTargetPos(element._box._x - 50, element._box._y + 50);
+            speechBubble.setTargetPos(detection.x - 50, detection.y + 50);
             speechBubble.draw();
           });
         }

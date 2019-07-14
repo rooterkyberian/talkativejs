@@ -37,10 +37,17 @@ function drawStats(canvas, detections) {
   lines.forEach((line, index) => ctx.fillText(line, 10, (index + 1) * fontSize * 1.1));
 }
 
+function nowTimestamp() {
+  return new Date().getTime() / 1000;
+}
+
 class FaceTracker {
   constructor() {
     this.faceDetectionNet = faceapi.nets.ssdMobilenetv1;
     this.options = this.getFaceDetectorOptions();
+    this.detectionBuffer = [];
+    this.timeout = 1; // seconds
+    this.detectionCounter = 0;
   }
 
   isLoaded() {
@@ -60,7 +67,34 @@ class FaceTracker {
     return new faceapi.SsdMobilenetv1Options({minConfidence});
   }
 
+  removeOldDetectionsFromBuffer(timestamp) {
+    const cutoff = timestamp - this.timeout;
+    this.detectionBuffer = this.detectionBuffer.filter(oldDetectionBuf => oldDetectionBuf.timestamp > cutoff)
+  }
+
+  detectionBufSort(d1Buf, d2Buf) {
+    return ((d1Buf.area < d2Buf.area) ? -1 : ((d1Buf.area > d2Buf.area) ? 1 : 0));
+  }
+
+  detectionToDetectionBuf(detection, timestamp) {
+    return {
+      timestamp,
+      detection,
+      area: detection.box.area,
+      x: detection.box.x,
+      y: detection.box.y,
+    }
+  }
+
   async detectAllFaces(videoEl) {
-    return await faceapi.detectAllFaces(videoEl, this.options);
+    const timestamp = nowTimestamp();
+    const detections = await faceapi.detectAllFaces(videoEl, this.options);
+    const newDectionsBuf = detections.map(detection => this.detectionToDetectionBuf(detection, timestamp));
+    newDectionsBuf.sort(this.detectionBufSort);
+
+    this.removeOldDetectionsFromBuffer();
+    newDectionsBuf.forEach((detectionBuf) => {
+    });
+    return newDectionsBuf;
   }
 }
