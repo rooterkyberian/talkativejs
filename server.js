@@ -1,8 +1,12 @@
 const express = require('express');
+const http = require('http');
+const reload = require('reload');
 const path = require('path');
+const watch = require('watch');
 
 const app = express();
 
+app.set('port', process.env.PORT || 2555);
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
@@ -17,5 +21,16 @@ app.use(express.static(path.join(faceapiExamples, '../../dist')));
 
 app.get('/', (req, res) => res.sendFile(path.join(viewsDir, 'talkative.html')));
 
-const port = 2555;
-app.listen(port, () => console.log(`Listening on port ${port}!`));
+const server = http.createServer(app);
+reload(app).then(function (reloadReturned) {
+  watch.watchTree(viewsDir, function (f, curr, prev) {
+    reloadReturned.reload();
+  });
+
+  server.listen(app.get('port'), function () {
+    console.log(`Web server listening on port ${app.get('port')}`)
+  })
+}).catch(function (err) {
+  console.error('Reload could not start, could not start server app', err)
+});
+
