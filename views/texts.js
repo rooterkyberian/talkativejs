@@ -85,7 +85,7 @@ export const texts = [
     {
 
         "type": "think",
-        "text": "A mogłem by być hydraulikiem..."
+        "text": "A mogłem być hydraulikiem..."
     },
     {
         "type": "talk",
@@ -104,10 +104,6 @@ export const texts = [
         "text": "☕",
     },
     {
-        "type": "speak",
-        "text": "It work on my machine",
-    },
-    {
         "type": "think",
         "text": "They still use Internet Explorer?!",
     },
@@ -117,7 +113,7 @@ export const texts = [
     },
     {
         "type": "speak",
-        "text": "No code no bugs",
+        "text": "No code, no bugs",
     },
     {
         "type": "speak",
