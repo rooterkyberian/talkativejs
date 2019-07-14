@@ -97,7 +97,7 @@ const texts = [
     },
     {
         "type": "think",
-        "text": "What  was the deadline again?"
+        "text": "What was the deadline again?"
     },
     {
         "type": "think",

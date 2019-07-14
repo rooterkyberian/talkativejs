@@ -47,7 +47,7 @@ class FaceTracker {
     this.options = this.getFaceDetectorOptions();
     this.detectionBuffer = {};
     this.timeout = 1; // seconds
-    this.minimalOverlap = 0.7;
+    this.minimalOverlap = 0.4;
   }
 
   isLoaded() {
