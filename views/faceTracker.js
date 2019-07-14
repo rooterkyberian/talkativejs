@@ -34,7 +34,9 @@ function drawStats(canvas, detections) {
     `${fpsText} fps (${timeText})`,
     `${detections} faces; confidence >=${minConfidence}`,
   ];
-  lines.forEach((line, index) => ctx.fillText(line, 10, (index + 1) * fontSize * 1.1));
+  lines.reverse().forEach((line, index) => {
+    ctx.fillText(line, 10, canvas.height - (index + 1) * fontSize * 1.1)
+  });
 }
 
 function nowTimestamp() {
