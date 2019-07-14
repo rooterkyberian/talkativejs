@@ -169,7 +169,6 @@ function timeUntilWeekend() {
   let Y = now.getFullYear();
   let m = now.getMonth();
   let d = now.getDate();
-  var date = new Date();
   let startWeekend = new Date(Y,m,d+(6-day));
   return diffHours(startWeekend, now);
 }

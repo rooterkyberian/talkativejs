@@ -50,9 +50,12 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (result && result.length > 0) {
           const dims = faceapi.matchDimensions(canvas, videoEl, true);
-          faceapi.draw.drawDetections(canvas, faceapi.resizeResults(
-            result.map(detectionBuf => detectionBuf.detection
-            ), dims));
+
+          if (debug) {
+            faceapi.draw.drawDetections(canvas, faceapi.resizeResults(
+              result.map(detectionBuf => detectionBuf.detection
+              ), dims));
+          }
 
           // draw speech bubble for each found face box
           result.forEach(function (detection) {
