@@ -5,27 +5,8 @@ let selectedFaceDetector = SSD_MOBILENETV1;
 // ssd_mobilenetv1 options
 let minConfidence = 0.5;
 
-function getFaceDetectorOptions() {
-  return new faceapi.SsdMobilenetv1Options({minConfidence});
-}
-
-function getCurrentFaceDetectionNet() {
-  return faceapi.nets.ssdMobilenetv1;
-}
-
 function isFaceDetectionModelLoaded(faceDetectionNet) {
   return !!faceDetectionNet.params
-}
-
-async function changeFaceDetector(detector) {
-  selectedFaceDetector = detector;
-
-  $('#loader').show();
-  const faceDetectionNet = getCurrentFaceDetectionNet();
-  if (!isFaceDetectionModelLoaded(faceDetectionNet)) {
-    await faceDetectionNet.load('/')
-  }
-  $('#loader').hide()
 }
 
 let forwardTimes = [];
@@ -58,9 +39,28 @@ function drawStats(canvas, detections) {
 
 class FaceTracker {
   constructor() {
-    this.selectedFaceDetector = SSD_MOBILENETV1;
-    if (!isFaceDetectionModelLoaded()) {
-      getCurrentFaceDetectionNet().load('/')
+    this.faceDetectionNet = faceapi.nets.ssdMobilenetv1;
+    this.options = this.getFaceDetectorOptions();
+  }
+
+  isLoaded() {
+    return isFaceDetectionModelLoaded(this.faceDetectionNet)
+  }
+
+  load() {
+    if (!this.isLoaded()) {
+
+      $('#loader').show();
+      this.faceDetectionNet.load('/');
+      $('#loader').hide();
     }
+  }
+
+  getFaceDetectorOptions() {
+    return new faceapi.SsdMobilenetv1Options({minConfidence});
+  }
+
+  async detectAllFaces(videoEl) {
+    return await faceapi.detectAllFaces(videoEl, this.options);
   }
 }
