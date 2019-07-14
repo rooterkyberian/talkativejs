@@ -78,9 +78,9 @@ const texts = [
         "text": "Where was I going again?"
     },
     {
-        "function": true,
+        "function": 'timeUntilWeekend()',
         "type": "talk",
-        "text": "Just n seconds until weekend"
+        "text": "Just {n} hours until weekend"
     },
     {
 
@@ -153,5 +153,33 @@ function randomInRange(min, max) {
 function getRandomText() {
   const max = texts.length - 1;
   const randomIndex = randomInRange(0, max);
-  return texts[randomIndex].text;
+  const textObject = texts[randomIndex];
+  var text = null;
+  if (textObject.function) {
+    const value = eval(textObject.function);
+    text = textObject.text;
+    text = text.replace('{n}', value);
+  }
+  return text;
 }
+
+
+function timeUntilWeekend() {
+  var now = new Date();
+  var day = now.getDay()
+  var Y = now.getFullYear();
+  var m = now.getMonth();
+  var d = now.getDate();
+  var date = new Date();
+  startWeekend = new Date(Y,m,d+(6-day));
+  return diffHours(startWeekend, now);
+}
+
+
+function diffHours(time2, time1)
+{
+  var diff =(time2.getTime() - time1.getTime()) / 1000;
+  diff /= (60 * 60);
+  return Math.abs(Math.round(diff));
+}
+
