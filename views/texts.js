@@ -164,20 +164,20 @@ function getRandomText() {
 
 
 function timeUntilWeekend() {
-  var now = new Date();
-  var day = now.getDay()
-  var Y = now.getFullYear();
-  var m = now.getMonth();
-  var d = now.getDate();
+  let now = new Date();
+  let day = now.getDay();
+  let Y = now.getFullYear();
+  let m = now.getMonth();
+  let d = now.getDate();
   var date = new Date();
-  startWeekend = new Date(Y,m,d+(6-day));
+  let startWeekend = new Date(Y,m,d+(6-day));
   return diffHours(startWeekend, now);
 }
 
 
 function diffHours(time2, time1)
 {
-  var diff =(time2.getTime() - time1.getTime()) / 1000;
+  let diff =(time2.getTime() - time1.getTime()) / 1000;
   diff /= (60 * 60);
   return Math.abs(Math.round(diff));
 }
