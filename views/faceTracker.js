@@ -72,6 +72,12 @@ class FaceTracker {
     this.detectionBuffer = this.detectionBuffer.filter(oldDetectionBuf => oldDetectionBuf.timestamp > cutoff)
   }
 
+  /**
+   * Smallest (furthest away) box first
+   * @param d1Buf
+   * @param d2Buf
+   * @return {number}
+   */
   detectionBufSort(d1Buf, d2Buf) {
     return ((d1Buf.area < d2Buf.area) ? -1 : ((d1Buf.area > d2Buf.area) ? 1 : 0));
   }
@@ -93,7 +99,8 @@ class FaceTracker {
     newDectionsBuf.sort(this.detectionBufSort);
 
     this.removeOldDetectionsFromBuffer();
-    newDectionsBuf.forEach((detectionBuf) => {
+    newDectionsBuf.forEach((detectionBuf, index) => {
+      detectionBuf.id = index;
     });
     return newDectionsBuf;
   }

@@ -54,7 +54,7 @@
           result.forEach(function (detection) {
             speechBubble = new SpeechBubble(canvas.getContext('2d'));
             speechBubble.panelBounds = new SpeechBubble.Bounds(detection.y - 120,  detection.x - 320, 300, 100);
-            speechBubble.text = 'randomize text here yo - idk about emotes';
+            speechBubble.text = `randomize text here yo - idk about emotes ${detection.id}`;
             speechBubble.setTargetPos(detection.x - 50, detection.y + 50);
             speechBubble.draw();
           });
