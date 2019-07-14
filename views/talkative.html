@@ -58,10 +58,7 @@
         const ts = Date.now();
         let videoSource = videoEl;
         if (rotate === -90) {
-          const imageCapture = new ImageCapture(videoSource.srcObject.getVideoTracks()[0]);
-          videoSource = await imageCapture.grabFrame();
-          videoSource = rotate_90_ccw(videoSource);
-          videoSource = videoEl;
+          
         }
         const result = await faceTracker.detectAllFaces(videoSource);
 
