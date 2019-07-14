@@ -26,45 +26,6 @@
     <canvas id="overlay"/>
   </div>
 
-  <div class="row side-by-side">
-
-    <!-- fps_meter -->
-    <div id="fps_meter" class="row side-by-side">
-      <div>
-        <label for="time">Time:</label>
-        <input disabled value="-" id="time" type="text" class="bold">
-        <label for="fps">Estimated Fps:</label>
-        <input disabled value="-" id="fps" type="text" class="bold">
-      </div>
-    </div>
-    <!-- fps_meter -->
-
-  </div>
-
-  <!-- ssd_mobilenetv1_controls -->
-  <span id="ssd_mobilenetv1_controls">
-      <div class="row side-by-side">
-        <div class="row">
-          <label for="minConfidence">Min Confidence:</label>
-          <input disabled value="0.5" id="minConfidence" type="text"
-                 class="bold">
-        </div>
-        <button
-          class="waves-effect waves-light btn"
-          onclick="onDecreaseMinConfidence()"
-        >
-          <i class="material-icons left">-</i>
-        </button>
-        <button
-          class="waves-effect waves-light btn"
-          onclick="onIncreaseMinConfidence()"
-        >
-          <i class="material-icons left">+</i>
-        </button>
-      </div>
-    </span>
-  <!-- ssd_mobilenetv1_controls -->
-
 </div>
 
 <script>
