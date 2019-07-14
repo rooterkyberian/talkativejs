@@ -20,7 +20,7 @@
   <div class="progress" id="loader">
     <div class="indeterminate"></div>
   </div>
-  <div style="position: relative" class="margin">
+  <div style="position: relative">
     <video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay
            muted></video>
     <canvas id="overlay"/>
@@ -88,7 +88,7 @@
 
     const ts = Date.now();
 
-    const result = await faceapi.detectSingleFace(videoEl, options);
+    const result = await faceapi.detectAllFaces(videoEl, options);
 
     updateTimeStats(Date.now() - ts);
 
