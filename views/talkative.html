@@ -30,25 +30,26 @@
 </div>
 
 <script>
+  let faceTracker;
 
   async function onPlay() {
     const videoEl = $('#inputVideo').get(0);
 
-    if (videoEl.paused || videoEl.ended || !isFaceDetectionModelLoaded(getCurrentFaceDetectionNet()))
+    if (videoEl.paused || videoEl.ended || !(faceTracker && faceTracker.isLoaded()))
       return setTimeout(() => onPlay());
 
-
-    const options = getFaceDetectorOptions();
-
     const ts = Date.now();
-    const result = await faceapi.detectAllFaces(videoEl, options);
+    const result = await faceTracker.detectAllFaces(videoEl);
 
     updateTimeStats(Date.now() - ts);
 
     const canvas = $('#overlay').get(0);
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (result && result.length > 0) {
       const dims = faceapi.matchDimensions(canvas, videoEl, true);
-      faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims))
+      faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims));
+
       // draw speech bubble for each found face box
       result.forEach(function (element) {
         speechBubble = new SpeechBubble(canvas.getContext('2d'));
@@ -64,8 +65,9 @@
   }
 
   async function run() {
+    faceTracker = new FaceTracker();
     // load face detection model
-    await changeFaceDetector(SSD_MOBILENETV1);
+    faceTracker.load();
 
     // try to access users webcam and stream the images
     // to the video element
