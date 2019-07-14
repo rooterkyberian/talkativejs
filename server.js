@@ -15,8 +15,7 @@ app.use(express.static(path.join(faceapiExamples, '../media')));
 app.use(express.static(path.join(faceapiExamples, '../../weights')));
 app.use(express.static(path.join(faceapiExamples, '../../dist')));
 
-app.get('/', (req, res) => res.redirect('/talkative'));
-app.get('/talkative', (req, res) => res.sendFile(path.join(viewsDir, 'talkative.html')));
+app.get('/', (req, res) => res.sendFile(path.join(viewsDir, 'talkative.html')));
 
 const port = 2555;
 app.listen(port, () => console.log(`Listening on port ${port}!`));
