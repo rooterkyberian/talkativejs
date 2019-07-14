@@ -76,3 +76,9 @@ body {
   background-color: #000;
   overflow: hidden;
 }
+
+
+video {
+  transform: rotate(-90deg);
+  -webkit-transform(-90deg);
+}
