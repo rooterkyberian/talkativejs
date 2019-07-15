@@ -24,7 +24,7 @@ app.get('/', (req, res) => res.sendFile(path.join(viewsDir, 'talkative.html')));
 const server = http.createServer(app);
 reload(app).then(function (reloadReturned) {
   watch.watchTree(viewsDir, function (f, curr, prev) {
-    reloadReturned.reload();
+    // reloadReturned.reload();
   });
 
   server.listen(app.get('port'), function () {
