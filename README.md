@@ -1,5 +1,6 @@
 # talkativejs
 
+![In Action](in_action.jpg)
 
 # Quick start
 
