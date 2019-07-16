@@ -4,10 +4,6 @@
   left: 0;
 }
 
-#facesContainer canvas {
-  margin: 10px;
-}
-
 body {
   background-color: #000;
   overflow: hidden;

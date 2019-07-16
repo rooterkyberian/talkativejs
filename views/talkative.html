@@ -22,7 +22,7 @@
       <div class="progress" id="loader">
         <div class="indeterminate"></div>
       </div>
-      <div style="position: relative; left: -500px">
+      <div style="position: relative;">
         <video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay
                muted></video>
         <canvas id="overlay"/>
@@ -39,10 +39,8 @@
         const dims = faceapi.getMediaDimensions(video);
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext("2d");
-        const w = dims.width;
-        const h = dims.height;
-        canvas.width = h;
-        canvas.height = w;
+        canvas.width = dims.height;
+        canvas.height =  dims.width;
         ctx.translate(0, canvas.height);
         ctx.rotate((-90 * Math.PI) / 180);
         ctx.drawImage(video, 0, 0);
@@ -86,8 +84,9 @@
           }
 
           // draw speech bubble for each found face box
+          ctx.save();
           result.forEach(function (detection) {
-            speechBubble = new SpeechBubble(canvas.getContext('2d'));
+            speechBubble = new SpeechBubble(ctx);
             speechBubble.panelBounds = new SpeechBubble.Bounds(detection.box.y - 120,  detection.box.x - 320, 300, 100);
             if (!detection.text) {
               detection.text = getRandomText();
@@ -96,6 +95,7 @@
             speechBubble.setTargetPos(detection.box.x - 50, detection.box.y + 50);
             speechBubble.draw();
           });
+          ctx.restore();
         }
         drawStats(canvas, result && result.length);
 
