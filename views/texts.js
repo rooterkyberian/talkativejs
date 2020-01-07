@@ -131,7 +131,19 @@ const texts = [
   },
   {
     type: "speak",
-    text: "There's nothing quite so permanent as a quick fix"
+    text: "My New Years resolution is 4K"
+  },
+  {
+    type: "think",
+    text: "It's 2020 already?!"
+  },
+  {
+    type: "speak",
+    text: ":(){ :|:& };:"
+  },
+  {
+    type: "think",
+    text: "</2019>"
   }
 ];
 
