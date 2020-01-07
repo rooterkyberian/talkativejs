@@ -1,0 +1,9 @@
+# See http://pre-commit.com for more information
+
+exclude: "node_modules" # Exclude file from being checked
+fail_fast: false # Dont stop running checks on first failure
+repos:
+  - repo: https://github.com/prettier/prettier
+    rev: 1.18.2
+    hooks:
+      - id: prettier

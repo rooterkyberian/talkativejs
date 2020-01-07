@@ -1,4 +1,4 @@
-const SSD_MOBILENETV1 = 'ssd_mobilenetv1';
+const SSD_MOBILENETV1 = "ssd_mobilenetv1";
 
 let selectedFaceDetector = SSD_MOBILENETV1;
 
@@ -6,7 +6,7 @@ let selectedFaceDetector = SSD_MOBILENETV1;
 let minConfidence = 0.5;
 
 function isFaceDetectionModelLoaded(faceDetectionNet) {
-  return !!faceDetectionNet.params
+  return !!faceDetectionNet.params;
 }
 
 let forwardTimes = [];
@@ -16,14 +16,14 @@ function updateTimeStats(timeInMs) {
 }
 
 function getAvgTimeInMs() {
-  return forwardTimes.reduce((total, t) => total + t) / forwardTimes.length
+  return forwardTimes.reduce((total, t) => total + t) / forwardTimes.length;
 }
 
 function drawStats(canvas, detections) {
   const ctx = canvas.getContext("2d");
   const fontSize = Math.ceil(Math.max(canvas.height / 60, 20));
   ctx.font = `${fontSize}px Arial`;
-  ctx.fillStyle = '#7fc8ec';
+  ctx.fillStyle = "#7fc8ec";
 
   const avgTimeInMs = getAvgTimeInMs();
   const timeText = `${Math.round(avgTimeInMs)} ms`;
@@ -32,10 +32,10 @@ function drawStats(canvas, detections) {
   const lines = [
     selectedFaceDetector,
     `${fpsText} fps (${timeText})`,
-    `${detections} faces; confidence >=${minConfidence}`,
+    `${detections} faces; confidence >=${minConfidence}`
   ];
   lines.reverse().forEach((line, index) => {
-    ctx.fillText(line, 10, canvas.height - (index + 1) * fontSize * 1.1)
+    ctx.fillText(line, 10, canvas.height - (index + 1) * fontSize * 1.1);
   });
 }
 
@@ -53,20 +53,19 @@ class FaceTracker {
   }
 
   isLoaded() {
-    return isFaceDetectionModelLoaded(this.faceDetectionNet)
+    return isFaceDetectionModelLoaded(this.faceDetectionNet);
   }
 
   load() {
     if (!this.isLoaded()) {
-
-      $('#loader').show();
-      this.faceDetectionNet.load('/');
-      $('#loader').hide();
+      $("#loader").show();
+      this.faceDetectionNet.load("/");
+      $("#loader").hide();
     }
   }
 
   getFaceDetectorOptions() {
-    return new faceapi.SsdMobilenetv1Options({minConfidence});
+    return new faceapi.SsdMobilenetv1Options({ minConfidence });
   }
 
   removeOldDetectionsFromBuffer(timestamp) {
@@ -87,20 +86,28 @@ class FaceTracker {
    * @return {number}
    */
   detectionBufSort(d1Buf, d2Buf) {
-    return ((d1Buf.box.area < d2Buf.box.area) ? -1 : ((d1Buf.box.area > d2Buf.box.area) ? 1 : 0));
+    return d1Buf.box.area < d2Buf.box.area
+      ? -1
+      : d1Buf.box.area > d2Buf.box.area
+      ? 1
+      : 0;
   }
 
   detectionToDetectionBuf(detection, timestamp) {
     return {
       timestamp,
       detection: detection,
-      box: detection.box,
-    }
+      box: detection.box
+    };
   }
 
   getOverlapArea(d1Buf, d2Buf) {
-    const width = Math.min(d1Buf.box.right, d2Buf.box.right) - Math.max(d1Buf.box.left, d2Buf.box.left);
-    const height = Math.min(d1Buf.box.bottom, d2Buf.box.bottom) - Math.max(d1Buf.box.top, d2Buf.box.top);
+    const width =
+      Math.min(d1Buf.box.right, d2Buf.box.right) -
+      Math.max(d1Buf.box.left, d2Buf.box.left);
+    const height =
+      Math.min(d1Buf.box.bottom, d2Buf.box.bottom) -
+      Math.max(d1Buf.box.top, d2Buf.box.top);
     if (Math.min(width, height) < 0) {
       return 0;
     }
@@ -116,10 +123,12 @@ class FaceTracker {
   }
 
   getId(detectionBuf, unusedDetectionBufs) {
-    const matches = Object.values(unusedDetectionBufs).map(oldDetectionBuf => ({
-      detectionBuf: oldDetectionBuf,
-      overlapRatio: this.getOverlapRatio(detectionBuf, oldDetectionBuf),
-    })).filter(match => match.overlapRatio > this.minimalOverlap);
+    const matches = Object.values(unusedDetectionBufs)
+      .map(oldDetectionBuf => ({
+        detectionBuf: oldDetectionBuf,
+        overlapRatio: this.getOverlapRatio(detectionBuf, oldDetectionBuf)
+      }))
+      .filter(match => match.overlapRatio > this.minimalOverlap);
     if (matches.length) {
       const oldId = matches[0].detectionBuf.id;
       delete unusedDetectionBufs[oldId];
@@ -131,17 +140,24 @@ class FaceTracker {
   async detectAllFaces(videoEl) {
     const timestamp = nowTimestamp();
     const detections = await faceapi.detectAllFaces(videoEl, this.options);
-    let newDectionsBuf = detections.map(detection => this.detectionToDetectionBuf(detection, timestamp));
+    let newDectionsBuf = detections.map(detection =>
+      this.detectionToDetectionBuf(detection, timestamp)
+    );
     newDectionsBuf.sort(this.detectionBufSort);
     this.removeOldDetectionsFromBuffer(timestamp);
     const unusedDetectionsBuffer = Object.assign({}, this.detectionBuffer);
-    newDectionsBuf.forEach((detectionBuf) => {
+    newDectionsBuf.forEach(detectionBuf => {
       detectionBuf.id = this.getId(detectionBuf, unusedDetectionsBuffer);
     });
     newDectionsBuf.forEach(detectionBuf => {
       const prevValue = this.detectionBuffer[detectionBuf.id] || {};
-      this.detectionBuffer[detectionBuf.id] = Object.assign(prevValue, detectionBuf);
+      this.detectionBuffer[detectionBuf.id] = Object.assign(
+        prevValue,
+        detectionBuf
+      );
     });
-    return newDectionsBuf.map(detectionBuf => this.detectionBuffer[detectionBuf.id]);
+    return newDectionsBuf.map(
+      detectionBuf => this.detectionBuffer[detectionBuf.id]
+    );
   }
 }

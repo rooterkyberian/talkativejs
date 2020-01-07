@@ -6,28 +6,33 @@
     <script src="faceTracker.js"></script>
     <script src="texts.js"></script>
     <script src="SpeechBubble.js"></script>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.css">
-    <script type="text/javascript"
-            src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.css"
+    />
     <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-2.1.1.min.js"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <script src="/reload/reload.js"></script>
   </head>
   <body>
     <div id="navbar"></div>
     <div class="center-content page-container">
-
       <div class="progress" id="loader">
         <div class="indeterminate"></div>
       </div>
       <div style="position: relative;">
-        <video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay
-               muted></video>
-        <canvas id="overlay"/>
+        <video
+          onloadedmetadata="onPlay(this)"
+          id="inputVideo"
+          autoplay
+          muted
+        ></video>
+        <canvas id="overlay" />
       </div>
-
     </div>
 
     <script>
@@ -37,10 +42,10 @@
 
       function rotate_90_ccw(video) {
         const dims = faceapi.getMediaDimensions(video);
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         canvas.width = dims.height;
-        canvas.height =  dims.width;
+        canvas.height = dims.width;
         ctx.translate(0, canvas.height);
         ctx.rotate((-90 * Math.PI) / 180);
         ctx.drawImage(video, 0, 0);
@@ -49,9 +54,13 @@
       }
 
       async function onPlay() {
-        const videoEl = $('#inputVideo').get(0);
+        const videoEl = $("#inputVideo").get(0);
 
-        if (videoEl.paused || videoEl.ended || !(faceTracker && faceTracker.isLoaded()))
+        if (
+          videoEl.paused ||
+          videoEl.ended ||
+          !(faceTracker && faceTracker.isLoaded())
+        )
           return setTimeout(() => onPlay());
 
         const dims = faceapi.getMediaDimensions(videoEl);
@@ -64,8 +73,8 @@
 
         updateTimeStats(Date.now() - ts);
 
-        const canvas = $('#overlay').get(0);
-        const ctx = canvas.getContext('2d');
+        const canvas = $("#overlay").get(0);
+        const ctx = canvas.getContext("2d");
         if (!rotate) {
           canvas.height = dims.height;
           canvas.width = dims.width;
@@ -76,30 +85,41 @@
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (result && result.length > 0) {
-
           if (debug) {
-            faceapi.draw.drawDetections(canvas, faceapi.resizeResults(
-              result.map(detectionBuf => detectionBuf.detection
-              ), dims));
+            faceapi.draw.drawDetections(
+              canvas,
+              faceapi.resizeResults(
+                result.map(detectionBuf => detectionBuf.detection),
+                dims
+              )
+            );
           }
 
           // draw speech bubble for each found face box
           ctx.save();
-          result.forEach(function (detection) {
+          result.forEach(function(detection) {
             speechBubble = new SpeechBubble(ctx);
-            speechBubble.panelBounds = new SpeechBubble.Bounds(detection.box.y - 120,  detection.box.x - 320, 300, 100);
+            speechBubble.panelBounds = new SpeechBubble.Bounds(
+              detection.box.y - 120,
+              detection.box.x - 320,
+              300,
+              100
+            );
             if (!detection.text) {
               detection.text = getRandomText();
             }
             speechBubble.text = detection.text;
-            speechBubble.setTargetPos(detection.box.x - 50, detection.box.y + 50);
+            speechBubble.setTargetPos(
+              detection.box.x - 50,
+              detection.box.y + 50
+            );
             speechBubble.draw();
           });
           ctx.restore();
         }
         drawStats(canvas, result && result.length);
 
-        setTimeout(() => onPlay())
+        setTimeout(() => onPlay());
       }
 
       async function run() {
@@ -115,16 +135,15 @@
             height: 1080
           }
         });
-        const videoEl = $('#inputVideo').get(0);
-        videoEl.srcObject = stream
+        const videoEl = $("#inputVideo").get(0);
+        videoEl.srcObject = stream;
       }
 
-      function updateResults() {
-      }
+      function updateResults() {}
 
-      $(document).ready(function () {
-        run()
-      })
+      $(document).ready(function() {
+        run();
+      });
     </script>
   </body>
 </html>
